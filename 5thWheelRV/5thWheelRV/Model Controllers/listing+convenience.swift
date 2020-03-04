@@ -12,73 +12,57 @@ import CoreData
 extension Listing {
     
     var listingRepresentation: ListingRepresentation? {
-        guard var id: UUID = id,
-            var state_id: String = state_id,
-            var price: Float = price,
-            var description_String: String = description_String,
-            var lat: String = lat,
-            var long: String = long,
-            var photo: String = photo,
-            var title: String = title,
-            var landowner_id: Bool = landowner_id,
-            var created: Date = created,
-            var updated: Date = updated
-        
-            else { return nil}
         return ListingRepresentation(id: id, state_id: state_id, title: title, description: description_String, price_per_day: price, photo_url: photo, landowner_ID: landowner_id, created: created, updated: updated)
 }
      // MARK: - Initializers
-        convenience init(id: UUID = UUID(),
-                         state_id: String = "",
-                         price: Float = 0.00,
-                         description_String: String = "",
-                         lat: String = "",
-                         long: String = "",
-                         photo: String = "",
-                         title: String = "",
-                         landowner_id: Bool = false,
-                         created: Date = Date(),
-                         updated: Date = Date(),
-                         context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+    convenience init(land_owner: Bool? = nil,
+                     desc: String? = nil,
+                     latitude: String? = nil,
+                     longitude: String? = nil,
+                     owner: String? = nil,
+                     photo_url: String? = nil,
+                     state: String? = nil,
+                     state_abbrv: String? = nil,
+                     title: String? = nil,
+                     price_per_day: Float? = nil,
+                     id: Int16,
+                     context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
             self.init(context: context)
-            self.id = id
-            self.state_id = state_id
-            self.price = price
-            self.description_String = description_String
-            self.lat = lat
-            self.long = long
+            self.land_owner = land_owner ?? false
+            self.desc = desc
+            self.lattitude = lattitude
+            self.longitude = longitude
+            self.owner = owner
+            self.photo_url = photo_url
+            self.state = state
+            self.state_abbrv = state_abbrv
             self.title = title
-            self.landowner_id = landowner_id
-            self.created = created
-            self.updated = updated
+            self.price_per_day = price_per_day ?? 0.00
+            self.id = id
             
         }
         
-        @discardableResult convenience init?(listingRepresentation: ListingRepresentation,
-                                             context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-            guard var id = listingRepresentation.id,
-                var state_id = listingRepresentation.state_id,
-                var price = listingRepresentation.price_per_day,
-                var description_String = listingRepresentation.description,
-                var lat = listingRepresentation.lat,
-                var long = listingRepresentation.long,
-                var photo = listingRepresentation.photo_url,
-                var title = listingRepresentation.title,
-                var landowner_ID = listingRepresentation.landowner_ID,
-                var created = listingRepresentation.created,
-                var updated = listingRepresentation.updated
-                else {return nil}
-            self.init(id: id,
-                      state_id: state_id,
-                      price: price,
-                      description_String: description_String,
-                      lat: lat,
-                      long: long,
-                      photo: photo,
+        @discardableResult convenience init?(listingRepresentation: ListingRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+                var land_owner = listingRepresentation.landOwner
+                var desc = listingRepresentation.desc
+                var lattitude = listingRepresentation.lattitde
+                var longitude = listingRepresentation.longitude
+                var photo_url = listingRepresentation.photo_url
+                var state = listingRepresentation.state
+                var state_abbrv = listingRepresentation.state_abbrv
+                var title = listingRepresentation.title
+                var price_per_day = listingRepresentation.price_per_day
+            self.init(land_owner: land_owner,
+                      desc: desc,
+                      latitude: lattitude,
+                      longitude: longitude,
+                      owner: owner,
+                      photo_url: photo_url,
+                      state: state,
+                      state_abbrv: state_abbrv,
                       title: title,
-                      landowner_id: landowner_ID,
-                      created: created,
-                      updated: updated,
+                      price_per_day: price_per_day,
+                      id: id,
                       context: context)
             
                 

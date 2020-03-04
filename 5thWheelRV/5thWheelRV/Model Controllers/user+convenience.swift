@@ -11,49 +11,35 @@ import CoreData
 
 extension User {
     var userRepresentation: UserRepresentation? {
-        guard email != ""
-        else {return nil}
-        return UserRepresentation(
-            email: email!,
-            password: password!,
-            username: username!,
-            isLandOwner: is_land_owner,
-            created: created!,
-            id: id!)
+        
+        guard var password = password,
+        username = username
     }
     
     
-    convenience init(email: String = "",
-                     password: String = "",
-                     username: String = "",
-                     isLandOwner: Bool = false,
-                     created: Date = Date(),
-                     id: UUID = UUID(),
+    convenience init(id: Int16,
+                     is_land_owner: Bool? = nil,
+                     password: String? = nil,
+                     username: String? = nil,
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
             self.init(context: context)
-            self.email = email
+            self.id = id
             self.password = password
             self.username = username
-            self.is_land_owner = isLandOwner
-            self.created = created
-            self.id = id
+            self.is_land_owner = is_land_owner ?? false
     }
 
         
         @discardableResult convenience init?(userRepresentation: UserRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-            var email = userRepresentation.email
-            var password = userRepresentation.password
-            var username = userRepresentation.username
-            var isLandOwner = userRepresentation.isLandOwner
-            var created = userRepresentation.created
             var id = userRepresentation.id
+            var is_land_owner = userRepresentation.is_land_owner
+            var username = userRepresentation.username
+            var password = userRepresentation.password
            
-            self.init(email: email,
+            self.init(id: id,
+                      is_land_owner: is_land_owner,
                       password: password,
                       username: username,
-                      isLandOwner: isLandOwner,
-                      created: created,
-                      id: id,
                       context: context)
             
                 

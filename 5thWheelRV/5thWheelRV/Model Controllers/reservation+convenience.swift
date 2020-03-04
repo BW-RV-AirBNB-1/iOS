@@ -13,38 +13,49 @@ extension Reservation {
    
 
 
-  convenience init(dateFrom: String = "",
-                     dateTo: String = "",
-                     created: Date = Date(),
-                     updated: Date = Date(),
-                     id: UUID = UUID(),
-                     listingID: UUID = UUID(),
-                     rvownerID: UUID =  UUID(),
+    convenience init(reserved: Bool = false,
+                     desc: String,
+                     reservation_name: String,
+                     reserved_from: String,
+                     reserved_to: String,
+                     state: String,
+                     title: String,
+                     listing_id: Int16,
+                     reservation_id: Int16,
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-    self.init(context: context)
-    self.date_from = dateFrom
-    self.date_to = dateTo
-    self.created = created
-    self.id = id
-    self.listing_id = listingID
-    self.rvowner_id = rvownerID
+        self.init(context: context)
+        self.reserved = reserved
+        self.desc = desc
+        self.reservation_name = reservation_name
+        self.reserved_from = reserved_from
+        self.reserved_to = reserved_to
+        self.state = state
+        self.title = title
+        self.listing_id = listing_id
+        self.reservation_id = reservation_id
     }
     
     @discardableResult convenience init?(reservationRepresentation: ReservationRepresentation,
                                                 context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-                    var dateFrom = reservationRepresentation.dateFrom
-                    var dateTo = reservationRepresentation.dateTo
-                    var created = reservationRepresentation.created
-                    var updated = reservationRepresentation.updated
-                    var listingID = reservationRepresentation.listingID
-                    var rvownerID = reservationRepresentation.rvownerID
+        var reserved = reservationRepresentation.reserved
+        var desc = reservationRepresentation.desc
+        var reservation_name = reservationRepresentation.reservationName
+        var reserved_from = reservationRepresentation.reservedFrom
+        var reserved_to = reservationRepresentation.reservedTo
+        var state = reservationRepresentation.state
+        var title = reservationRepresentation.title
+        var listing_id = reservationRepresentation.listingID
+        var reservation_id = reservationRepresentation.reservationID
                    
-        self.init(dateFrom: dateFrom,
-                  dateTo: dateTo,
-                  created: created,
-                  updated: updated,
-                  listingID: listingID,
-                  rvownerID: rvownerID,
+        self.init(reserved: reserved,
+                  desc: desc,
+                  reservation_name: reservation_name,
+                  reserved_from: reserved_from,
+                  reserved_to: reserved_to,
+                  state: state,
+                  title: title,
+                  listing_id: listing_id,
+                  reservation_id: reservation_id,
                   context: context)
                
                    

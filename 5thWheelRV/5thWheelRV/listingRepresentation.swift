@@ -10,17 +10,17 @@ import Foundation
 
 struct ListingRepresentation: Equatable, Codable {
     
-    var id: UUID?
-    var state_id: String?
-    var title: String?
-    var description: String?
-    var price_per_day: Float?
+    var landOwner: Bool
+    var desc: String
+    var lattitde: String? = nil
+    var longitude: String? = nil
+    var owner: String
     var photo_url: String?
-    var landowner_ID: Bool?
-    var lat: String?
-    var long: String?
-    var created: Date?
-    var updated: Date?
+    var state: String
+    var state_abbrv: String
+    var title: String
+    var price_per_day: Float
+    var id: Int16
     
 }
 
@@ -30,24 +30,24 @@ struct ListingRepresentations: Codable {
 
 struct UserRepresentation: Equatable, Codable {
     
-    var email: String
-    var password: String
+    var id: Int16
+    var is_land_owner: Bool
     var username: String
-    var isLandOwner: Bool
-    var created: Date
-    var id: UUID
-    
+    var password: String
     
 }
 
 
 struct ReservationRepresentation: Equatable, Codable {
-    var dateFrom: String
-    var dateTo: String
-    var created: Date
-    var updated: Date
-    var listingID: UUID
-    var rvownerID: UUID
+    var reserved: Bool
+    var desc: String
+    var reservationName: String
+    var reservedFrom: String
+    var reservedTo: String
+    var state: String
+    var title: String
+    var listingID: Int16
+    var reservationID: Int16
 }
 
 struct StateRepresentation: Equatable, Codable {

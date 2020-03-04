@@ -17,9 +17,10 @@ enum HTTPMethod: String {
 }
 
 enum NetworkError: Error {
+    
     case noAccess
     case notFound
-    case serverError
+    case serverError 
     case badURL
     case otherError
     case forbidden
@@ -28,6 +29,7 @@ enum NetworkError: Error {
     }
 
 class ListingController {
+    
     init() {
         fetchListingsFromServer()
     }
@@ -73,7 +75,42 @@ class ListingController {
         }
     }
     
-    // MARK: - API METHODS
+    // MARK: - ALL USER API METHODS
+    
+    func allUserSearchForListing(with id: String, completion: @escaping (Error?) -> Void) {
+            
+            var requestURL = baseURL!.appendingPathComponent("\(id)")
+        
+            URLSession.shared.dataTask(with: requestURL) { (data, _, error) in
+            
+            if let error = error {
+                NSLog("Error searching for movie with id #\(id): \(error)")
+                completion(error)
+                return
+            }
+            
+            guard let data = data else {
+                NSLog("No data returned from data task")
+                completion(error)
+                return
+            }
+            
+            do {
+                let listingRepresentations = try JSONDecoder().decode(ListingRepresentations.self, from: data).results
+                self.listings = listingRepresentations
+                completion(nil)
+            }     catch {
+                NSLog("Error decoding JSON data: \(error)")
+                completion(error)
+            }
+        }.resume()
+    }
+    
+    // MARK: - RV OWNER API METHODS
+    
+    
+    
+    // MARK: -
     
     func put(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
         
@@ -178,34 +215,7 @@ class ListingController {
         }
     }
     
-    func allUserSearchForListing(with id: String, completion: @escaping (Error?) -> Void) {
-        
-        var requestURL = baseURL!.appendingPathExtension("\(id)")
     
-        URLSession.shared.dataTask(with: requestURL) { (data, _, error) in
-        
-        if let error = error {
-            NSLog("Error searching for movie with id #\(id): \(error)")
-            completion(error)
-            return
-        }
-        
-        guard let data = data else {
-            NSLog("No data returned from data task")
-            completion(error)
-            return
-        }
-        
-        do {
-            let listingRepresentations = try JSONDecoder().decode(ListingRepresentations.self, from: data).results
-            self.listings = listingRepresentations
-            completion(nil)
-        }     catch {
-            NSLog("Error decoding JSON data: \(error)")
-            completion(error)
-        }
-    }.resume()
-}
   
     
     func fetchListingsFromServer(completion: @escaping CompletionHandler = { _ in }) {
