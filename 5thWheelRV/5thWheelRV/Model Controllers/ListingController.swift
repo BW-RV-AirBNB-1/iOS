@@ -14,8 +14,7 @@ import CoreData
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
-    
-    }
+}
 
 enum NetworkError: Error {
     case noAccess
@@ -79,15 +78,15 @@ class ListingController {
     func put(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
         
         let id = listing.id ?? UUID()
-        listing.id = identifier
+        listing.id = id
     
-        let requestURL = baseURL.appendingPathComponent(identifier.uuidString).appendingPathExtension("json")
+        let requestURL = baseURL!.appendingPathComponent(id.uuidString).appendingPathExtension("json")
         var request = URLRequest(url: requestURL)
         request.httpMethod = "PUT"
     
         
         do  {
-        guard let movieRepresentation = movie.movieRepresentation else {
+        guard let listingRepresentation = listing.listingRepresentation else {
             NSLog("No entry, Entry == nil")
             completion(nil)
             return
@@ -95,10 +94,10 @@ class ListingController {
     
             try CoreDataStack.shared.save(context: CoreDataStack.shared.mainContext)
             let encoder = JSONEncoder()
-            request.httpBody = try encoder.encode(movieRepresentation)
+            request.httpBody = try encoder.encode(listingRepresentation)
     
         } catch {
-            NSLog("Can't encode movie representation")
+            NSLog("Can't encode listing representation")
             completion(error)
             return
         }

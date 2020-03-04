@@ -28,6 +28,30 @@ struct ListingRepresentations: Codable {
     let results: [ListingRepresentation]
 }
 
+struct UserRepresentation: Equatable, Codable {
+    
+    var email: String
+    var password: String
+    var username: String
+    var isLandOwner: Bool
+    var created: Date
+    var id: UUID
+    
+    
+}
 
 
+struct ReservationRepresentation: Equatable, Codable {
+    var dateFrom: String
+    var dateTo: String
+    var created: Date
+    var updated: Date
+    var listingID: UUID
+    var rvownerID: UUID
+}
 
+struct StateRepresentation: Equatable, Codable {
+    var stateAbbrv: String
+    var stateName: String
+    var id: UUID
+}
