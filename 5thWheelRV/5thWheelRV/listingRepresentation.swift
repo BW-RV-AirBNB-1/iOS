@@ -10,23 +10,24 @@ import Foundation
 
 struct ListingRepresentation: Codable, Equatable {
     var id: Int16
-    var title, desc: String
-    var price_per_day: Float
-    var photo_url: String
+    var title: String
+    var desc: String
+    var pricePerDay: Float
+    var photoURL: String
     var latitude, longitude: String?
     var owner: String
-    var land_owner: Bool
-    var state, state_abbrv: String
+    var landOwner: Bool
+    var state, stateAbbrv: String
 
     enum CodingKeys: String, CodingKey {
         case id, title
         case desc = "description"
-        case price_per_day = "price_per_day"
-        case photo_url = "photo_url"
+        case pricePerDay = "price_per_day"
+        case photoURL = "photo_url"
         case latitude, longitude, owner
-        case land_owner = "land_owner"
+        case landOwner = "land_owner"
         case state
-        case state_abbrv = "state_abbrv"
+        case stateAbbrv = "state_abbrv"
     }
 }
 
@@ -34,15 +35,12 @@ struct ListingRepresentations: Codable {
     let results: [ListingRepresentation]
 }
 
-struct UserRepresentation: Equatable, Codable {
-    
+struct UserRepresentation: Codable, Equatable {
     var id: Int16
-    var is_land_owner: Bool
     var username: String
+    var isLandOwner: Bool
     var password: String
-    
 }
-
 
 struct ReservationRepresentation: Equatable, Codable {
     var reserved: Bool
@@ -57,7 +55,13 @@ struct ReservationRepresentation: Equatable, Codable {
 }
 
 struct StateRepresentation: Equatable, Codable {
-    var stateAbbrv: String
+    var stateAbbreviation: String
     var stateName: String
     var id: Int16
 }
+
+
+struct ValidLogon: Equatable {
+       var user: [User]
+       var token: String
+   }

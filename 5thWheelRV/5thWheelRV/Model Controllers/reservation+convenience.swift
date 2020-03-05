@@ -10,60 +10,64 @@ import Foundation
 import CoreData
 
 extension Reservation {
-   
-
-
+    
+    // MARK: -
     convenience init(reserved: Bool = false,
                      desc: String,
-                     reservation_name: String,
-                     reserved_from: String,
-                     reserved_to: String,
+                     reservationName: String,
+                     reservedFrom: String,
+                     reservedTo: String,
                      state: String,
                      title: String,
-                     listing_id: Int16,
-                     reservation_id: Int16,
+                     listingID: Int16,
+                     reservationID: Int16,
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
         self.init(context: context)
         self.reserved = reserved
         self.desc = desc
-        self.reservation_name = reservation_name
-        self.reserved_from = reserved_from
-        self.reserved_to = reserved_to
+        self.reservation_name = reservationName
+        self.reserved_from = reservedFrom
+        self.reserved_to = reservedTo
         self.state = state
         self.title = title
-        self.listing_id = listing_id
-        self.reservation_id = reservation_id
+        self.listing_id = listingID
+        self.reservation_id = reservationID
     }
-    
     @discardableResult convenience init?(reservationRepresentation: ReservationRepresentation,
-                                                context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-        var reserved = reservationRepresentation.reserved
-        var desc = reservationRepresentation.desc
-        var reservation_name = reservationRepresentation.reservationName
-        var reserved_from = reservationRepresentation.reservedFrom
-        var reserved_to = reservationRepresentation.reservedTo
-        var state = reservationRepresentation.state
-        var title = reservationRepresentation.title
-        var listing_id = reservationRepresentation.listingID
-        var reservation_id = reservationRepresentation.reservationID
-                   
+                                         context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+        let reserved = reservationRepresentation.reserved
+        let desc = reservationRepresentation.desc
+        let reservationName = reservationRepresentation.reservationName
+        let reservedFrom = reservationRepresentation.reservedFrom
+        let reservedTo = reservationRepresentation.reservedTo
+        let state = reservationRepresentation.state
+        let title = reservationRepresentation.title
+        let listingID = reservationRepresentation.listingID
+        let reservationID = reservationRepresentation.reservationID
         self.init(reserved: reserved,
                   desc: desc,
-                  reservation_name: reservation_name,
-                  reserved_from: reserved_from,
-                  reserved_to: reserved_to,
+                  reservationName: reservationName,
+                  reservedFrom: reservedFrom,
+                  reservedTo: reservedTo,
                   state: state,
                   title: title,
-                  listing_id: listing_id,
-                  reservation_id: reservation_id,
+                  listingID: listingID,
+                  reservationID: reservationID,
                   context: context)
-               
-                   
-                   
-               
-           }
+    }
+    
+    var reservationRepresentation: ReservationRepresentation? {
+        return ReservationRepresentation(reserved: self.reserved,
+                                         desc: self.desc!,
+                                         reservationName: self.reservation_name!,
+                                         reservedFrom: self.reserved_from!,
+                                         reservedTo: self.reserved_to!,
+                                         state: self.state!,
+                                         title: self.title!,
+                                         listingID: self.listing_id,
+                                         reservationID: self.reservation_id)
+        
+    }
     
     
 }
-
-    

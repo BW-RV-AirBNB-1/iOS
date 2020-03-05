@@ -11,7 +11,6 @@ import CoreData
 class CoreDataStack {
 
     // MARK: - Properties
-    
     lazy var container: NSPersistentContainer = {
         // The name below should match the filename of the xcdatamodeld file exactly (minus the extension)
         let container = NSPersistentContainer(name: "Listing")
@@ -23,15 +22,11 @@ class CoreDataStack {
         container.viewContext.automaticallyMergesChangesFromParent = true
         return container
     }()
-    
     static let shared = CoreDataStack()
-    
     var mainContext: NSManagedObjectContext {
         return container.viewContext
     }
-    
     // MARK: - Methods
-    
     func save(context: NSManagedObjectContext = CoreDataStack.shared.mainContext) throws {
         context.performAndWait {
             do {
@@ -42,6 +37,4 @@ class CoreDataStack {
             }
         }
     }
-    
-    
 }

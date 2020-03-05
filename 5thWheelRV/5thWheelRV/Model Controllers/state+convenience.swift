@@ -10,25 +10,21 @@ import Foundation
 import CoreData
 
 extension State {
-    
-    
-    
-    convenience init(stateAbbrv: String = "",
+    convenience init(stateAbbreviation: String = "",
                      stateName: String = "",
                      id: Int16 = Int16(),
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
         self.init(context: context)
-        self.state_abbreviation = stateAbbrv
+        self.state_abbreviation = stateAbbreviation
         self.state_name = stateName
         self.id = id
     }
-    
-    @discardableResult convenience init?(stateRepresensation: StateRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-        self.init(stateAbbrv: stateRepresensation.stateAbbrv,
+    @discardableResult convenience init?(
+        stateRepresensation: StateRepresentation,
+                                         context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+        self.init(stateAbbreviation: stateRepresensation.stateAbbreviation,
                   stateName: stateRepresensation.stateName,
                   id: stateRepresensation.id,
                   context: context)
     }
-        
-                     
 }

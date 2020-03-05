@@ -10,18 +10,9 @@ import Foundation
 import CoreData
 
 extension User {
-    var userRepresentation: UserRepresentation? {
-        
-        guard var password = password,
-        var username = username
-        else {return nil}
-        
-        return UserRepresentation(id: Int16(), is_land_owner: is_land_owner, username: username, password: password)
-    }
     
-    
-    convenience init(id: Int16,
-                     is_land_owner: Bool? = nil,
+    convenience init(id: Int16 = Int16(),
+                     isLandOwner: Bool = false,
                      password: String? = nil,
                      username: String? = nil,
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
@@ -29,29 +20,29 @@ extension User {
             self.id = id
             self.password = password
             self.username = username
-            self.is_land_owner = is_land_owner ?? false
+            self.is_land_owner = isLandOwner
     }
-
-        
-        @discardableResult convenience init?(userRepresentation: UserRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-            var id = userRepresentation.id
-            var is_land_owner = userRepresentation.is_land_owner
-            var username = userRepresentation.username
-            var password = userRepresentation.password
-           
+    @discardableResult convenience init?(userRepresentation: UserRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+            let id = userRepresentation.id
+            let isLandOwner = userRepresentation.isLandOwner
+            let username = userRepresentation.username
+            let password = userRepresentation.password
             self.init(id: id,
-                      is_land_owner: is_land_owner,
+                      isLandOwner: isLandOwner,
                       password: password,
                       username: username,
                       context: context)
-            
-                
-                
-            
         }
-        
-    }
-
     
-
+    var userRepresentation: UserRepresentation? {
+        
+        guard let password = password,
+            let username = username
+        else {return nil}
+        let id = self.id
+        let isLandOwner = is_land_owner
+        return UserRepresentation(id: id, username: username, isLandOwner: isLandOwner, password: password)
+    }
+   
+}
 

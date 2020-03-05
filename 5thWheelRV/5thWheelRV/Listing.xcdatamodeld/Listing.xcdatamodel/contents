@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Listing" representedClassName="Listing" syncable="YES" codeGenerationType="class">
-        <attribute name="desc" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="land_owner" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="latitude" optional="YES" attributeType="String"/>
-        <attribute name="longitude" optional="YES" attributeType="String"/>
-        <attribute name="owner" optional="YES" attributeType="String"/>
-        <attribute name="photo_url" optional="YES" attributeType="String"/>
-        <attribute name="price_per_day" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="state" optional="YES" attributeType="String"/>
-        <attribute name="state_abbrv" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="desc" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="land_owner" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="latitude" attributeType="String"/>
+        <attribute name="longitude" attributeType="String"/>
+        <attribute name="owner" attributeType="String"/>
+        <attribute name="photo_url" attributeType="String"/>
+        <attribute name="price_per_day" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="state" attributeType="String"/>
+        <attribute name="state_abbrv" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
     </entity>
     <entity name="Reservation" representedClassName="Reservation" syncable="YES" codeGenerationType="class">
         <attribute name="desc" optional="YES" attributeType="String"/>
