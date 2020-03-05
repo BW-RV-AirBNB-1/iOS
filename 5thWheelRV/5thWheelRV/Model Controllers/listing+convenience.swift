@@ -10,8 +10,6 @@ import Foundation
 import CoreData
 
 extension Listing {
-  
-
      // MARK: - Initializers
     convenience init(landOwner: Bool = false,
                      desc: String = "",

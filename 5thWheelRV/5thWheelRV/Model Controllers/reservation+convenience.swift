@@ -55,7 +55,6 @@ extension Reservation {
                   reservationID: reservationID,
                   context: context)
     }
-    
     var reservationRepresentation: ReservationRepresentation? {
         return ReservationRepresentation(reserved: self.reserved,
                                          desc: self.desc!,
@@ -66,8 +65,5 @@ extension Reservation {
                                          title: self.title!,
                                          listingID: self.listing_id,
                                          reservationID: self.reservation_id)
-        
     }
-    
-    
 }

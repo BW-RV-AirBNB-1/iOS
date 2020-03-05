@@ -31,8 +31,7 @@ enum NetworkError: Error {
 // MARK: - Listing Controller Class
 class ListingController {
     init() {
-        
-        getAllListingsFromServer()
+        getAllListings()
         getAllReservationsFromServer()
     }
     var reservations: [ReservationRepresentation]? = []
@@ -88,18 +87,19 @@ class ListingController {
                 let decodedListings = Array(
                     try jsonDecoder.decode([String: ListingRepresentation].self,
                                                                    from: data).values)
-                try self.updateListings(with: decodedListings)
-                    completion(nil)
+                self.listings = nil
+                self.listings = decodedListings
+                completion(nil)
             } catch {
                 NSLog("Error decoding entry representations from DataBase: \(error)")
                 completion(error)
             }
         }.resume()
     }
-    // GET Listing by ID
-    func allUserSearchForListingWithID(with id: Int16,
+    // GET Listing by listingID
+    func allUserSearchForListingWithID(with listingID: Int16,
                                        completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
-        let url = baseURL!.appendingPathComponent("\(id)")
+        let url = baseURL!.appendingPathComponent("\(listingID)")
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
             URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -122,8 +122,8 @@ class ListingController {
             do {
                 let listingRepresentation = try JSONDecoder().decode(ListingRepresentation.self, from: data)
                 self.listings = nil
-                let rep: [ListingRepresentation] = [listingRepresentation]
-                try self.updateListings(with: rep)
+                let rep = listingRepresentation
+                self.listings = [rep]
                 completion(.success(listingRepresentation))
             } catch {
                 NSLog("Error decoding JSON data: \(error)")
@@ -132,8 +132,8 @@ class ListingController {
         }.resume()
     }
     // GET All Land Owner Listings
-    func getAllLandOwnerListings(with id: Int16,
-                                 completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
+    func getAllLandOwnerListingsByID(with id: Int16,
+                                     completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
         let url = baseURL!.appendingPathComponent("\(id)")
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
@@ -157,8 +157,8 @@ class ListingController {
             do {
                 let listingRepresentation = try JSONDecoder().decode(ListingRepresentation.self, from: data)
                 self.listings = nil
-                let rep: [ListingRepresentation] = [listingRepresentation]
-                try self.updateListings(with: rep)
+                let rep: ListingRepresentation = listingRepresentation
+                self.listings = [rep]
                 completion(.success(listingRepresentation))
             } catch {
                 NSLog("Error decoding JSON data: \(error)")
@@ -166,8 +166,7 @@ class ListingController {
             }
         }.resume()
     }
-   
-    // MARK: - Put, Delete, Update Listing
+    // MARK: - Put, Delete Listing
     func put(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
         let requestURL = baseURL!.appendingPathComponent(String(listing.id)).appendingPathExtension("json")
         var request = URLRequest(url: requestURL)
@@ -195,7 +194,6 @@ class ListingController {
 
         }.resume()
     }
-    
     func deleteListingFromServer(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
         let requestURL = baseURL!.appendingPathComponent("\(listing.id)")
         var request = URLRequest(url: requestURL)
@@ -213,7 +211,6 @@ class ListingController {
             }
         }.resume()
     }
-    
     // MARK: - User Methods
     func registerAccount(user: User) -> ValidLogon {
         let defaultURL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/register")
@@ -223,12 +220,147 @@ class ListingController {
         var logon = ValidLogon(user: userArray, token: UUID().uuidString)
         return logon
 }
-    
   //  func login(userRepresentation: UserRepresentation) {
-    
     //https://build-wk-4-backend-coreygumbs.herokuapp.com/api/login}
-    // MARK: - Reservation CRUD Methods
-    
+    // MARK: - Reservation Methods
+    // GET Reservation by reservationID
+       func getReservationByReservationID(with reservationID: Int16,
+                                          completion: @escaping (Result<ReservationRepresentation, NetworkError>) -> Void) {
+           let reservationURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations/")!
+           let url = reservationURL.appendingPathComponent("\(reservationID)")
+           var request = URLRequest(url: url)
+           request.httpMethod = HTTPMethod.get.rawValue
+               URLSession.shared.dataTask(with: request) { (data, response, error) in
+               if let response = response as? HTTPURLResponse {
+                   if response.statusCode != 200 {
+                       NSLog("404 File Not Found")
+                       completion(.failure(.badURL))
+                   }
+               }
+                   if let error = error {
+                       print("Error getting data : \(String(describing: error))")
+                       completion(.failure(.serverError))
+                       return
+                   }
+               guard let data = data else {
+                   NSLog("403 Forbidden")
+                   completion(.failure(.forbidden))
+                   return
+               }
+               do {
+                   let reservationRepresentation = try JSONDecoder().decode(ReservationRepresentation.self, from: data)
+                   self.reservations = nil
+                   let res: ReservationRepresentation = reservationRepresentation
+                   self.reservations = [res]
+                   completion(.success(reservationRepresentation))
+               } catch {
+                   NSLog("Error decoding JSON data: \(error)")
+                   completion(.failure(.noDecode))
+               }
+           }.resume()
+       }
+    // GET Reservation By listingID
+    func getReservationByListingID(with listingID: Int16,
+                                   completion: @escaping (Result<ReservationRepresentation, NetworkError>) -> Void) {
+            let reservationURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations/")!
+            let url = reservationURL.appendingPathComponent("\(listingID)")
+            var request = URLRequest(url: url)
+            request.httpMethod = HTTPMethod.get.rawValue
+                URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let response = response as? HTTPURLResponse {
+                    if response.statusCode != 200 {
+                        NSLog("404 File Not Found")
+                        completion(.failure(.badURL))
+                    }
+                }
+                    if let error = error {
+                        print("Error getting data : \(String(describing: error))")
+                        completion(.failure(.serverError))
+                        return
+                    }
+                guard let data = data else {
+                    NSLog("403 Forbidden")
+                    completion(.failure(.forbidden))
+                    return
+                }
+                do {
+                    let reservationRepresentation = try JSONDecoder().decode(ReservationRepresentation.self, from: data)
+                    self.reservations = nil
+                    let res: ReservationRepresentation = reservationRepresentation
+                    self.reservations = [res]
+                    completion(.success(reservationRepresentation))
+                } catch {
+                    NSLog("Error decoding JSON data: \(error)")
+                    completion(.failure(.noDecode))
+                }
+            }.resume()
+        }
+    // GET Reservation by userID
+    func getReservationByUserID(with userID: Int16,
+                                completion: @escaping (Result<ReservationRepresentation, NetworkError>) -> Void) {
+        let reservationURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations/owner/")!
+        let url = reservationURL.appendingPathComponent("\(userID)")
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get.rawValue
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode != 200 {
+                    NSLog("404 File Not Found")
+                    completion(.failure(.badURL))
+                }
+            }
+                if let error = error {
+                    print("Error getting data : \(String(describing: error))")
+                    completion(.failure(.serverError))
+                    return
+                }
+            guard let data = data else {
+                NSLog("403 Forbidden")
+                completion(.failure(.forbidden))
+                return
+            }
+            do {
+                let reservationRepresentation = try JSONDecoder().decode(ReservationRepresentation.self, from: data)
+                self.reservations = nil
+                let res: ReservationRepresentation = reservationRepresentation
+                self.reservations = [res]
+                completion(.success(reservationRepresentation))
+            } catch {
+                NSLog("Error decoding JSON data: \(error)")
+                completion(.failure(.noDecode))
+            }
+        }.resume()
+    }
+    // GET all reservations
+    func getAllReservationsFromServer(completion: @escaping CompletionHandler = { _ in }) {
+        let reservationURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations")!
+        var request = URLRequest(url: reservationURL)
+        request.httpMethod = "GET"
+        URLSession.shared.dataTask(with: request) { (data, _, error) in
+                    if let error = error {
+                        NSLog("Error fetching tasks from API: \(error)")
+                        completion(error)
+                        return
+            }
+        guard let data = data else {
+            NSLog("No reservations returned from API")
+            completion(NSError())
+            return
+        }
+        let jsonDecoder = JSONDecoder()
+        do {
+            let decodedReservations = Array(
+                try jsonDecoder.decode([String: ReservationRepresentation].self,
+                                                                from: data).values)
+            self.reservations = decodedReservations
+                completion(nil)
+        } catch {
+            NSLog("Error decoding entry representations from DataBase: \(error)")
+            completion(error)
+        }
+    }.resume()
+}
+    // PUT UPDATE RESERVATION
     func updateReservation(reservation: Reservation, representation: ReservationRepresentation) {
            reservation.reserved = representation.reserved
            reservation.desc = representation.desc
@@ -242,12 +374,11 @@ class ListingController {
            putReservation(reservation: reservation)
            getAllReservationsFromServer()
        }
-    
     func createReservation(reservationRepresentation: ReservationRepresentation) {
-        let reservation: Reservation = Reservation(reservationRepresentation: reservationRepresentation)
+        let reservation: Reservation = Reservation(reservationRepresentation: reservationRepresentation)!
         putReservation(reservation: reservation)
     }
-    
+    // DELETE Reservation
     func deleteReservationFromServer(reservation: Reservation, completion: @escaping CompletionHandler = {_ in }) {
         let reservationURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations/")!
         let requestURL = reservationURL.appendingPathComponent("\(reservation.reservation_id)")
@@ -266,7 +397,7 @@ class ListingController {
             }
         }.resume()
     }
-    
+    // PUT Method
     func putReservation(reservation: Reservation, completion: @escaping CompletionHandler = {_ in }) {
         let putURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/reservations/")!
         let requestURL = putURL.appendingPathComponent(String(reservation.reservation_id)).appendingPathExtension("json")
@@ -293,13 +424,6 @@ class ListingController {
                 return
             }
             completion(nil)
-
         }.resume()
     }
-    
-   
-    
-    
-    
-    
 }

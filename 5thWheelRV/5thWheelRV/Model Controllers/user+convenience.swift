@@ -10,7 +10,6 @@ import Foundation
 import CoreData
 
 extension User {
-    
     convenience init(id: Int16 = Int16(),
                      isLandOwner: Bool = false,
                      password: String? = nil,
@@ -22,7 +21,8 @@ extension User {
             self.username = username
             self.is_land_owner = isLandOwner
     }
-    @discardableResult convenience init?(userRepresentation: UserRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
+    @discardableResult convenience init?(userRepresentation: UserRepresentation,
+                                         context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
             let id = userRepresentation.id
             let isLandOwner = userRepresentation.isLandOwner
             let username = userRepresentation.username
@@ -33,9 +33,7 @@ extension User {
                       username: username,
                       context: context)
         }
-    
     var userRepresentation: UserRepresentation? {
-        
         guard let password = password,
             let username = username
         else {return nil}
@@ -43,6 +41,4 @@ extension User {
         let isLandOwner = is_land_owner
         return UserRepresentation(id: id, username: username, isLandOwner: isLandOwner, password: password)
     }
-   
 }
-
