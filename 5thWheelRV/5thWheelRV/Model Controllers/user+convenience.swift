@@ -13,7 +13,10 @@ extension User {
     var userRepresentation: UserRepresentation? {
         
         guard var password = password,
-        username = username
+        var username = username
+        else {return nil}
+        
+        return UserRepresentation(id: Int16(), is_land_owner: is_land_owner, username: username, password: password)
     }
     
     

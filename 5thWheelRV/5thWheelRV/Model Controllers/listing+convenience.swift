@@ -12,7 +12,9 @@ import CoreData
 extension Listing {
     
     var listingRepresentation: ListingRepresentation? {
-        return ListingRepresentation(id: id, state_id: state_id, title: title, description: description_String, price_per_day: price, photo_url: photo, landowner_ID: landowner_id, created: created, updated: updated)
+        
+
+        return ListingRepresentation(id: id, title: title!, desc: desc!, price_per_day: price_per_day, photo_url: photo_url!, latitude: latitude, longitude: longitude, owner: owner!, land_owner: land_owner, state: state!, state_abbrv: state_abbrv!)
 }
      // MARK: - Initializers
     convenience init(land_owner: Bool? = nil,
@@ -25,12 +27,12 @@ extension Listing {
                      state_abbrv: String? = nil,
                      title: String? = nil,
                      price_per_day: Float? = nil,
-                     id: Int16,
+                     id: Int16 = Int16(),
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
             self.init(context: context)
             self.land_owner = land_owner ?? false
             self.desc = desc
-            self.lattitude = lattitude
+            self.latitude = latitude
             self.longitude = longitude
             self.owner = owner
             self.photo_url = photo_url
@@ -43,18 +45,22 @@ extension Listing {
         }
         
         @discardableResult convenience init?(listingRepresentation: ListingRepresentation, context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
-                var land_owner = listingRepresentation.landOwner
-                var desc = listingRepresentation.desc
-                var lattitude = listingRepresentation.lattitde
-                var longitude = listingRepresentation.longitude
-                var photo_url = listingRepresentation.photo_url
-                var state = listingRepresentation.state
-                var state_abbrv = listingRepresentation.state_abbrv
-                var title = listingRepresentation.title
-                var price_per_day = listingRepresentation.price_per_day
+            
+            var land_owner = listingRepresentation.land_owner
+            var desc = listingRepresentation.desc
+            var latitude = listingRepresentation.latitude
+            var longitude = listingRepresentation.longitude
+            var owner = listingRepresentation.owner
+            var photo_url = listingRepresentation.photo_url
+            var state = listingRepresentation.state
+            var state_abbrv = listingRepresentation.state_abbrv
+            var title = listingRepresentation.title
+            var price_per_day = listingRepresentation.price_per_day
+            var id = listingRepresentation.id
+            
             self.init(land_owner: land_owner,
                       desc: desc,
-                      latitude: lattitude,
+                      latitude: latitude,
                       longitude: longitude,
                       owner: owner,
                       photo_url: photo_url,

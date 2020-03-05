@@ -8,20 +8,26 @@
 
 import Foundation
 
-struct ListingRepresentation: Equatable, Codable {
-    
-    var landOwner: Bool
-    var desc: String
-    var lattitde: String? = nil
-    var longitude: String? = nil
-    var owner: String
-    var photo_url: String?
-    var state: String
-    var state_abbrv: String
-    var title: String
-    var price_per_day: Float
+struct ListingRepresentation: Codable, Equatable {
     var id: Int16
-    
+    var title, desc: String
+    var price_per_day: Float
+    var photo_url: String
+    var latitude, longitude: String?
+    var owner: String
+    var land_owner: Bool
+    var state, state_abbrv: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, title
+        case desc = "description"
+        case price_per_day = "price_per_day"
+        case photo_url = "photo_url"
+        case latitude, longitude, owner
+        case land_owner = "land_owner"
+        case state
+        case state_abbrv = "state_abbrv"
+    }
 }
 
 struct ListingRepresentations: Codable {
@@ -53,5 +59,5 @@ struct ReservationRepresentation: Equatable, Codable {
 struct StateRepresentation: Equatable, Codable {
     var stateAbbrv: String
     var stateName: String
-    var id: UUID
+    var id: Int16
 }

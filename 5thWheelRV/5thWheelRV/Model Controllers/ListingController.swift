@@ -14,6 +14,8 @@ import CoreData
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
+    case delete = "DELETE"
+    case put = "PUT"
 }
 
 enum NetworkError: Error {
@@ -27,6 +29,7 @@ enum NetworkError: Error {
     case noDecode
     case noData
     }
+// MARK: - ListingController
 
 class ListingController {
     
@@ -34,7 +37,7 @@ class ListingController {
         fetchListingsFromServer()
     }
     
-    var listings: [ListingRepresentation] = []
+    var listings: [ListingRepresentation]? = []
     static let shared = ListingController()
     
     let baseURL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/listings/")
@@ -46,23 +49,22 @@ class ListingController {
     
     // MARK: - CRUD
     
-    func createListing(title: String, id: UUID, description: String, lat: String, long: String, photo: String, state_id: String, price: Float) {
-        let listing = Listing(id: id, state_id: state_id, price: price, description_String: description, lat: lat, long: long, photo: photo, title: title, landowner_id: true, created: Date(), updated: Date(), context: MC)
+    func createListing(land_owner: Bool, desc: String, lattitude: String, longitude: String, owner: String, photo_url: String, state: String, state_abbrv: String, title: String, price_per_day: Float, id: Int16) {
+        let listing = Listing(land_owner: land_owner, desc: desc, latitude: lattitude, longitude: longitude, owner: owner, photo_url: photo_url, state: state, state_abbrv: state_abbrv, title: title, price_per_day: price_per_day, id: id)
         put(listing: listing)
     }
     
     func updateListing(listing: Listing, representation: ListingRepresentation) {
-        listing.id = representation.id
-        listing.price = representation.price_per_day!
-        listing.description_String = representation.description
-        listing.lat = representation.lat
-        listing.long = representation.long
-        listing.photo = representation.photo_url
-        listing.state_id = representation.state_id
+        listing.land_owner = representation.land_owner
+        listing.desc = representation.desc
+        listing.latitude = representation.latitude
+        listing.longitude = representation.longitude
+        listing.photo_url = representation.photo_url
+        listing.state = representation.state
+        listing.state_abbrv = representation.state_abbrv
         listing.title = representation.title
-        listing.landowner_id = representation.landowner_ID!
-        listing.created = representation.created
-        listing.updated = Date()
+        listing.price_per_day = representation.price_per_day
+        listing.id = representation.id
     }
     
     func deleteListing(for listing: Listing) {
@@ -77,34 +79,88 @@ class ListingController {
     
     // MARK: - ALL USER API METHODS
     
-    func allUserSearchForListing(with id: String, completion: @escaping (Error?) -> Void) {
-            
-            var requestURL = baseURL!.appendingPathComponent("\(id)")
+    // GET All Listings (RV ONLY)
+    func getAllListing(completion: @escaping CompletionHandler = { _ in }) {
         
-            URLSession.shared.dataTask(with: requestURL) { (data, _, error) in
-            
-            if let error = error {
-                NSLog("Error searching for movie with id #\(id): \(error)")
-                completion(error)
-                return
-            }
-            
+            var request = URLRequest(url: baseURL!)
+            request.httpMethod = "GET"
+                    
+            URLSession.shared.dataTask(with: request) { (data, _, error) in
+                        if let error = error {
+                            NSLog("Error fetching tasks from API: \(error)")
+                            completion(error)
+                            return
+                        
+                }
             guard let data = data else {
-                NSLog("No data returned from data task")
-                completion(error)
+                NSLog("No data returned from API")
+                completion(NSError())
                 return
             }
             
+            
+            let jsonDecoder = JSONDecoder()
             do {
-                let listingRepresentations = try JSONDecoder().decode(ListingRepresentations.self, from: data).results
-                self.listings = listingRepresentations
-                completion(nil)
-            }     catch {
-                NSLog("Error decoding JSON data: \(error)")
+                let decodedListings = Array(try jsonDecoder.decode([String : ListingRepresentation].self, from: data).values)
+                try self.updateListings(with: decodedListings)
+                    completion(nil)
+            } catch {
+                NSLog("Error decoding entry representations from DataBase: \(error)")
                 completion(error)
             }
         }.resume()
     }
+    
+    
+  
+    // GET Listing by ID
+    func allUserSearchForListingWithID(with id: String, completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
+            
+        let url = baseURL!.appendingPathComponent(id)
+            var requestURL = baseURL!.appendingPathComponent("\(id)")
+        var request = URLRequest(url: requestURL)
+        request.httpMethod = HTTPMethod.get.rawValue
+        
+        
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode != 200 {
+                    NSLog("404 File Not Found")
+                    completion(.failure(.badURL))
+                }
+            }
+                
+                if let error = error {
+                    print("Error getting data : \(String(describing: error))")
+                    completion(.failure(.serverError))
+                    return
+                }
+            
+            guard let data = data else {
+                NSLog("403 Forbidden")
+                completion(.failure(.forbidden))
+                return
+            }
+            
+            do {
+                let listingRepresentation = try JSONDecoder().decode(ListingRepresentation.self, from: data)
+                self.listings = nil
+                var rep: [ListingRepresentation] = [listingRepresentation]
+                try self.updateListings(with: rep)
+                
+                completion(.success(listingRepresentation))
+            }     catch {
+                NSLog("Error decoding JSON data: \(error)")
+                completion(.failure(.noDecode))
+            }
+        }.resume()
+        
+        
+    }
+    
+    
+    
     
     // MARK: - RV OWNER API METHODS
     
@@ -113,11 +169,7 @@ class ListingController {
     // MARK: -
     
     func put(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
-        
-        let id = listing.id ?? UUID()
-        listing.id = id
-    
-        let requestURL = baseURL!.appendingPathComponent(id.uuidString).appendingPathExtension("json")
+        let requestURL = baseURL!.appendingPathComponent(String(listing.id)).appendingPathExtension("json")
         var request = URLRequest(url: requestURL)
         request.httpMethod = "PUT"
     
@@ -140,24 +192,22 @@ class ListingController {
         }
         URLSession.shared.dataTask(with: request) { (_, _, error) in
             if let error = error {
-                NSLog("Error PUTing movie to database. : \(error)")
+                NSLog("Error PUTing l to database. : \(error)")
                 completion(error)
                 return
             }
             completion(nil)
 
         }.resume()
+        
     }
     
     
     func deleteEntryFromServer(listing: Listing, completion: @escaping CompletionHandler = {_ in }) {
         
-        guard let id = listing.id else {
-            completion(NSError())
-            return
-        }
         
-        let requestURL = baseURL!.appendingPathComponent("\(id)")
+        
+        let requestURL = baseURL!.appendingPathComponent("\(listing.id)")
         
         
         var request = URLRequest(url: requestURL)
@@ -195,11 +245,10 @@ class ListingController {
                     let existingListings = try context.fetch(fetchRequest)
 
                     for listing in existingListings {
-                        guard let id = listing.id,
-                              let representation = representationsByID[id]
-                        else { continue }
-                        self.updateListing(listing: listing, representation: representation)
-                        listingsToCreate.removeValue(forKey: id)
+                        let representation = representationsByID[listing.id]
+                       
+                        try self.updateListing(listing: listing, representation: representation!)
+                        listingsToCreate.removeValue(forKey: listing.id)
                     }
                     for representation in listingsToCreate.values {
                         let _ = Listing(listingRepresentation: representation, context: context)
@@ -216,7 +265,7 @@ class ListingController {
     }
     
     
-  
+    // MARK: - This is also GET All Listings (RV)
     
     func fetchListingsFromServer(completion: @escaping CompletionHandler = { _ in }) {
     
@@ -248,6 +297,9 @@ class ListingController {
         }
     }.resume()
 }
+    
+    
+    // MARK: - RV OWNER ONLY METHOD
     
     
     

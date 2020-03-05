@@ -11,12 +11,14 @@ import CoreData
 
 extension State {
     
+    
+    
     convenience init(stateAbbrv: String = "",
                      stateName: String = "",
-                     id: UUID = UUID(),
+                     id: Int16 = Int16(),
                      context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
         self.init(context: context)
-        self.state_abbrv = stateAbbrv
+        self.state_abbreviation = stateAbbrv
         self.state_name = stateName
         self.id = id
     }
