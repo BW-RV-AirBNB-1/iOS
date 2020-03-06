@@ -15,6 +15,9 @@
 		1BE77F90240C5B690077B8D3 /* ListingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE77F8F240C5B690077B8D3 /* ListingsTableViewController.swift */; };
 		1BE77FB4240D6ED30077B8D3 /* WheelRVTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE77FB3240D6ED30077B8D3 /* WheelRVTests.swift */; };
 		1BE77FC2240D6EE10077B8D3 /* WheelRVUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE77FC1240D6EE10077B8D3 /* WheelRVUITests.swift */; };
+		E129C77A241168C6005E2B99 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129C779241168C6005E2B99 /* UserController.swift */; };
+		E129C77C241168ED005E2B99 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129C77B241168ED005E2B99 /* Keys.swift */; };
+		E129C77E24117860005E2B99 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129C77D24117860005E2B99 /* LoginViewController.swift */; };
 		E31F3A44240EC2A1009D9346 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F3A43240EC2A1009D9346 /* CoreDataStack.swift */; };
 		E31F3A46240EC334009D9346 /* listingRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F3A45240EC334009D9346 /* listingRepresentation.swift */; };
 		E31F3A4A240EC9BC009D9346 /* ListingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F3A49240EC9BC009D9346 /* ListingController.swift */; };
@@ -60,6 +63,9 @@
 		351FE45F9330037E7AB361DF /* Pods-5thWheelRV.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-5thWheelRV.release.xcconfig"; path = "Target Support Files/Pods-5thWheelRV/Pods-5thWheelRV.release.xcconfig"; sourceTree = "<group>"; };
 		6A30E04C464BE7ED6CBCCB24 /* Pods_5thWheelRV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_5thWheelRV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA10721B09424D8DB1E8B4DE /* Pods-5thWheelRV.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-5thWheelRV.debug.xcconfig"; path = "Target Support Files/Pods-5thWheelRV/Pods-5thWheelRV.debug.xcconfig"; sourceTree = "<group>"; };
+		E129C779241168C6005E2B99 /* UserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
+		E129C77B241168ED005E2B99 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		E129C77D24117860005E2B99 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		E31F3A43240EC2A1009D9346 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		E31F3A45240EC334009D9346 /* listingRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = listingRepresentation.swift; sourceTree = "<group>"; };
 		E31F3A49240EC9BC009D9346 /* ListingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingController.swift; sourceTree = "<group>"; };
@@ -132,6 +138,7 @@
 		1BE77F8A240C570F0077B8D3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E129C77B241168ED005E2B99 /* Keys.swift */,
 				1BE77F75240C54EB0077B8D3 /* AppDelegate.swift */,
 				1BE77F77240C54EB0077B8D3 /* SceneDelegate.swift */,
 				1BE77F83240C54F00077B8D3 /* Info.plist */,
@@ -164,6 +171,7 @@
 			children = (
 				E31F3A49240EC9BC009D9346 /* ListingController.swift */,
 				E31F3A4D240F67E7009D9346 /* user+convenience.swift */,
+				E129C779241168C6005E2B99 /* UserController.swift */,
 				E31F3A51240FA728009D9346 /* state+convenience.swift */,
 				E31F3A4B240ECF1B009D9346 /* listing+convenience.swift */,
 				E31F3A4F240F98A9009D9346 /* reservation+convenience.swift */,
@@ -175,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				1BE77F8F240C5B690077B8D3 /* ListingsTableViewController.swift */,
+				E129C77D24117860005E2B99 /* LoginViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -389,12 +398,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E129C77E24117860005E2B99 /* LoginViewController.swift in Sources */,
 				E31F3A44240EC2A1009D9346 /* CoreDataStack.swift in Sources */,
 				1BE77F76240C54EB0077B8D3 /* AppDelegate.swift in Sources */,
 				1BE77F78240C54EB0077B8D3 /* SceneDelegate.swift in Sources */,
 				E31F3A4A240EC9BC009D9346 /* ListingController.swift in Sources */,
+				E129C77C241168ED005E2B99 /* Keys.swift in Sources */,
 				E31F3A46240EC334009D9346 /* listingRepresentation.swift in Sources */,
 				E31F3A56240FAE13009D9346 /* Listing.xcdatamodeld in Sources */,
+				E129C77A241168C6005E2B99 /* UserController.swift in Sources */,
 				E31F3A52240FA728009D9346 /* state+convenience.swift in Sources */,
 				E31F3A50240F98A9009D9346 /* reservation+convenience.swift in Sources */,
 				E31F3A4E240F67E7009D9346 /* user+convenience.swift in Sources */,

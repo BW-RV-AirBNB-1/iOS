@@ -59,7 +59,8 @@ struct StateRepresentation: Equatable, Codable {
     var stateName: String
     var id: Int16
 }
+
 struct ValidLogon: Equatable {
        var user: [User]
        var token: String
-   }
+}

@@ -21,6 +21,7 @@ extension User {
             self.username = username
             self.is_land_owner = isLandOwner
     }
+
     @discardableResult convenience init?(userRepresentation: UserRepresentation,
                                          context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {
             let id = userRepresentation.id
@@ -32,7 +33,8 @@ extension User {
                       password: password,
                       username: username,
                       context: context)
-        }
+    }
+
     var userRepresentation: UserRepresentation? {
         guard let password = password,
             let username = username

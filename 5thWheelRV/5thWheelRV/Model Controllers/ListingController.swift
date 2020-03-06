@@ -31,11 +31,13 @@ enum NetworkError: Error {
 // MARK: - Listing Controller Class
 class ListingController {
     init() {
-        getAllListings()
-        getAllReservationsFromServer()
+        //getAllListings()
+        //getAllReservationsFromServer()
     }
     var reservations: [ReservationRepresentation]? = []
     var listings: [ListingRepresentation]? = []
+    var states: [StateRepresentation]? = []
+    
     static let shared = ListingController()
     let baseURL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/listings/")
     typealias CompletionHandler = (Error?) -> Void
@@ -71,6 +73,9 @@ class ListingController {
     func getAllListings(completion: @escaping CompletionHandler = { _ in }) {
             var request = URLRequest(url: baseURL!)
             request.httpMethod = "GET"
+            request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
             URLSession.shared.dataTask(with: request) { (data, _, error) in
                         if let error = error {
                             NSLog("Error fetching tasks from API: \(error)")
@@ -96,12 +101,16 @@ class ListingController {
             }
         }.resume()
     }
-    // GET Listing by listingID
+    /// GET Listing by listingID
     func allUserSearchForListingWithID(with listingID: Int16,
                                        completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
-        let url = baseURL!.appendingPathComponent("\(listingID)")
+        let url = baseURL!.appendingPathComponent("\(listingID)").appendingPathExtension("json")
+        
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
+        request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
             URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let response = response as? HTTPURLResponse {
                 if response.statusCode != 200 {
@@ -114,6 +123,7 @@ class ListingController {
                     completion(.failure(.serverError))
                     return
                 }
+                
             guard let data = data else {
                 NSLog("403 Forbidden")
                 completion(.failure(.forbidden))
@@ -131,12 +141,18 @@ class ListingController {
             }
         }.resume()
     }
+    
+    
+    
     // GET All Land Owner Listings
     func getAllLandOwnerListingsByID(with id: Int16,
                                      completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
         let url = baseURL!.appendingPathComponent("\(id)")
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
+        request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
             URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let response = response as? HTTPURLResponse {
                 if response.statusCode != 200 {
@@ -171,6 +187,9 @@ class ListingController {
         let requestURL = baseURL!.appendingPathComponent(String(listing.id)).appendingPathExtension("json")
         var request = URLRequest(url: requestURL)
         request.httpMethod = "PUT"
+        request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         do { guard let listingRepresentation = listing.listingRepresentation
             else { NSLog("No entry, Entry == nil")
             completion(nil)
@@ -198,6 +217,9 @@ class ListingController {
         let requestURL = baseURL!.appendingPathComponent("\(listing.id)")
         var request = URLRequest(url: requestURL)
         request.httpMethod = "DELETE"
+        request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         URLSession.shared.dataTask(with: request) { (_, _, error) in
             guard error == nil  else {
                 print("Error deleting entry: \(String(describing: error))")
@@ -217,6 +239,7 @@ class ListingController {
         let userArray: [User] = [user]
         var request = URLRequest(url: defaultURL!)
         request.httpMethod = "POST"
+        
         var logon = ValidLogon(user: userArray, token: UUID().uuidString)
         return logon
 }
@@ -266,6 +289,9 @@ class ListingController {
             let url = reservationURL.appendingPathComponent("\(listingID)")
             var request = URLRequest(url: url)
             request.httpMethod = HTTPMethod.get.rawValue
+        request.addValue("\(globalResponse.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
                 URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let response = response as? HTTPURLResponse {
                     if response.statusCode != 200 {
@@ -424,6 +450,96 @@ class ListingController {
                 return
             }
             completion(nil)
+        }.resume()
+    }
+    
+    func allUserSearchForListingWithStateID(with stateID: Int16,
+                                            completion: @escaping (Result<ListingRepresentation, NetworkError>) -> Void) {
+        let url: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/states/location/")!.appendingPathComponent("\(stateID)")
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get.rawValue
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode != 200 {
+                    NSLog("404 File Not Found")
+                    completion(.failure(.badURL))
+                }
+            }
+                if let error = error {
+                    print("Error getting data - Servor Error: \(String(describing: error))")
+                    completion(.failure(.serverError))
+                    return
+                }
+            guard let data = data else {
+                NSLog("403 Forbidden")
+                completion(.failure(.forbidden))
+                return
+            }
+            do {
+                let listingRepresentation = try JSONDecoder().decode(ListingRepresentation.self, from: data)
+                self.listings = nil
+                let rep = listingRepresentation
+                self.listings = [rep]
+                completion(.success(listingRepresentation))
+            } catch {
+                NSLog("Error decoding JSON data: \(error)")
+                completion(.failure(.noDecode))
+            }
+        }.resume()
+    }
+    
+    func getStatebyStateID(with id: Int16, completion: @escaping CompletionHandler = { _ in }) {
+        let stateURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/states/")!.appendingPathComponent("\(id)")
+        var request = URLRequest(url: stateURL)
+        request.httpMethod = "GET"
+        URLSession.shared.dataTask(with: request) { (data, _, error) in if let error = error {
+            NSLog("Error fetching States from API - Bad URL: \(error)")
+                completion(error)
+                return}
+            guard let data = data else {
+                NSLog("No States returned from API 404 Not Found")
+                    completion(NSError())
+                    return
+            }
+            let jsonDecoder = JSONDecoder()
+            do {
+                let decodedStates = Array(
+                    try jsonDecoder.decode([String: StateRepresentation].self,
+                                           from: data).values)
+                self.states = decodedStates
+                completion(nil)
+            } catch {
+                NSLog("Error decoding entry representations from DataBase - Decode Error: \(error)")
+                    completion(error)
+            }
+        }.resume()
+    }
+    
+    func getAllStatesFromServer(completion: @escaping CompletionHandler = { _ in }) {let stateURL: URL = URL(string: "https://build-wk-4-backend-coreygumbs.herokuapp.com/api/states")!
+    var request = URLRequest(url: stateURL)
+    request.httpMethod = "GET"
+    URLSession.shared.dataTask(with: request) { (data, _, error) in
+                        if let error = error {
+                            NSLog("Error fetching States from API: \(error)")
+                            completion(error)
+                            return
+                }
+            guard let data = data else {
+                NSLog("No reservations returned from API")
+                completion(NSError())
+                return
+            }
+            let jsonDecoder = JSONDecoder()
+            do {
+                let decodedStates = Array(
+                    try jsonDecoder.decode([String: StateRepresentation].self,
+                                                                    from: data).values)
+                self.states = decodedStates
+                    completion(nil)
+            } catch {
+                NSLog("Error decoding entry representations from DataBase: \(error)")
+                completion(error)
+            }
         }.resume()
     }
 }

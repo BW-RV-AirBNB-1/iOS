@@ -49,7 +49,7 @@ extension Listing {
             stateAbbrv: listingRepresentation.stateAbbrv,
             title: listingRepresentation.title,
             pricePerDay: listingRepresentation.pricePerDay,
-            id: listingRepresentation.id,
+            id: listingRepresentation.id ?? 0,
             context: context)
     }
     var listingRepresentation: ListingRepresentation? {
